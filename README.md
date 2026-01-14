@@ -1,75 +1,71 @@
-# Projeto de Redes – Infraestrutura com Serviço Web e Monitoramento
 
-## Visão Geral
-Este projeto consiste na implementação de uma **infraestrutura de rede completa**, conectada à Internet, utilizando sistemas Linux e serviços reais de rede. O objetivo foi integrar **infraestrutura, segurança, serviços de rede e aplicação web**, simulando um ambiente próximo ao utilizado em cenários reais.
+## Como Executar o Projeto
 
-A rede foi projetada para oferecer conectividade segura, monitoramento em tempo real e acesso a serviços para usuários finais, com separação lógica por sub-redes e controle de tráfego.
+### Pré-requisitos
 
----
+- Navegador web  (Chrome, Firefox, Edge, Safari)
+- Extensão Live Server (VS Code)
 
-## Arquitetura da Rede
-- Dispositivo de borda atuando como **roteador** (LAN ↔ WAN)
-- Múltiplas **sub-redes internas**
-- Roteamento interno entre sub-redes
-- Acesso à Internet via **NAT**
-- Políticas de segurança baseadas em firewall
+### Opção 1: Usando Live Server (VS Code)
 
----
+1. Instale a extensão **Live Server** no VS Code
+2. Clone ou baixe o projeto
+3. Abra a pasta do projeto no VS Code
+4. Clique com botão direito no arquivo `index.html`
+5. Selecione "Open with Live Server"
+6. O navegador abrirá automaticamente em 
+`http://localhost:5500` ou `http://127.0.0.1:5500`
 
-## Serviços Implementados
-- **DHCP** – distribuição automática de endereços IP  
-- **DNS** – resolução de nomes para hosts internos  
-- **Firewall** – regras avançadas com política padrão restritiva  
-- **NAT** – acesso das redes internas à Internet  
-- **NTP** – sincronização de relógio dos dispositivos  
-- **Wi-Fi (Access Point)** – conexão de clientes sem fio  
-- **Servidor Web (Apache)** – aplicação web para usuários finais  
-- **Monitoramento de Rede e Sistema** – coleta e visualização de métricas em tempo real  
+**Atenção**: Algumas funcionalidades (como OAuth) podem não funcionar corretamente ao abrir diretamente sem servidor local.
 
----
+## Configuração do Google OAuth 2.0 (API)
 
-## Monitoramento
-Foi implementado um sistema de monitoramento que coleta informações sobre:
-- Uso de CPU e memória
-- Tráfego de rede
-- Estado dos serviços
-- Dispositivos conectados
+O projeto já está configurado com um Client ID do Google OAuth. Para usar a funcionalidade de login social:
 
-O painel de monitoramento foi **integrado diretamente à aplicação web**, permitindo visualização via navegador.
+### URIs Configurados:
+- `http://localhost:5500/pages/auth/oauth-callback.html`
+- `http://127.0.0.1:5500/pages/auth/oauth-callback.html`
 
----
+### Como foi configurado o Client ID:
+
+1. Acesse o [Google Cloud Console](https://console.cloud.google.com/)
+2. Crie um novo projeto ou selecione um existente
+3. Vá em **APIs e Serviços** → **Credenciais**
+4. Clique em **Criar credenciais** → **ID do cliente OAuth 2.0**
+5. Configure:
+   - Tipo de aplicativo: **Aplicativo da Web**
+   
+   - Origens JavaScript autorizadas:
+     - `http://localhost:5500`
+
+     - `http://127.0.0.1:5500`
+
+   - URIs de redirecionamento autorizados:
+     - `http://localhost:5500/pages/auth oauth-callback.html`
+
+     - `http://127.0.0.1:5500/pages/auth/oauth-callback.html`
+
+6. Copie o Client ID gerado
+7. Substitua no arquivo `pages/auth/login.html` na linha:
+   ```javascript
+   const GOOGLE_CLIENT_ID = 'SEU_CLIENT_ID_AQUI';
+   ```
+
+## Armazenamento de Dados
+
+O projeto utiliza **localStorage** do navegador para persistência de dados. Os dados são armazenados localmente e não há backend ou banco de dados SQL.
+
+### Estruturas de Dados:
+- `contasAlunos[]` - Contas de estudantes
+- `contasEmpresas[]` - Contas de empresas
+- `vagasEmpresa[]` - Vagas publicadas
+- `candidaturas[]` - Candidaturas realizadas
+- `userLogado` / `empresaLogada` - Sessão ativa
+
 
 ## Segurança
-- Firewall configurado com **iptables**
-- Controle seletivo de tráfego por IP
-- Bloqueio/liberação de serviços específicos
-- Separação de acessos entre sub-redes
-- Diagnóstico e varredura da rede utilizando **Nmap**
 
----
-
-## Ambiente de Implementação
-- Sistema operacional: **Linux (Ubuntu)**
-- Infraestrutura implementada em ambiente real/virtualizado
-- Serviços configurados manualmente, sem uso de simuladores simplificados
-
----
-
-## Documentação
-O projeto conta com documentação detalhada descrevendo:
-- Topologia da rede
-- Configuração dos serviços
-- Regras de firewall
-- Testes realizados
-- Resultados obtidos
-
----
-
-## Objetivo Acadêmico
-Projeto desenvolvido como trabalho acadêmico com foco em:
-- Redes de computadores
-- Infraestrutura de sistemas
-- Integração entre serviços de rede e aplicações
-- Monitoramento e segurança
-
-
+- Validação de formulários no cliente
+- OAuth 2.0 com state e nonce para prevenção de CSRF
+- Sessões gerenciadas com localStorage/sessionStorage
+- Validação de tokens JWT no callback
